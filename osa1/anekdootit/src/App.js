@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+const Header = () => <h3>Anecdote of the day</h3>;
+
 const DisplayAnecdote = ({ text }) => {
   return <p>{text}</p>;
 };
@@ -56,6 +58,7 @@ const App = () => {
 
   return (
     <div>
+      <Header />
       <DisplayAnecdote text={anecdotes[selected]} />
       <DisplayAnecdoteVotes value={allVotes[selected]} />
       <Button text="vote" onClickHandler={handleVoting} />
