@@ -22,8 +22,14 @@ const App = () => {
       setNewNumber("");
       return;
     }
-    const newPerson = { name: newName, number: newNumber };
-    setPersons(persons.concat(newPerson));
+    const isNameAndNumberFilled = newName && newNumber;
+
+    if (isNameAndNumberFilled) {
+      const newPerson = { name: newName, number: newNumber };
+      setPersons(persons.concat(newPerson));
+    } else {
+      window.alert("Please fill both fields for name and number.");
+    }
     setNewName("");
     setNewNumber("");
   };
@@ -43,10 +49,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <PhonebookFilter name={filter} onNewFilterChange={handleFilterChange}>
-        {" "}
-      </PhonebookFilter>
-      <h2>Add a new</h2>
+      <PhonebookFilter name={filter} onNewFilterChange={handleFilterChange} />
+      <h3>Add a new</h3>
       <PersonForm
         onSubmitHandler={addPerson}
         name={newName}
@@ -54,7 +58,7 @@ const App = () => {
         number={newNumber}
         handleNewNumberChange={handleNewNumberChange}
       />
-      <h2>Numbers</h2>
+      <h3>Numbers</h3>
       <ShowPersons persons={persons} filter={filter} />
     </div>
   );
