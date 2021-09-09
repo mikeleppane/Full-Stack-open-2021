@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import ShowPersons from "./components/ShowPersons";
 import PhonebookFilter from "./components/PhonebookFilter";
 import PersonForm from "./components/PersonForm";
+import personService from "./services/personService";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -10,33 +10,75 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
 
-  const personDBURL = "http://localhost:3001/persons";
-
   useEffect(() => {
-    axios.get(personDBURL).then((response) => {
-      console.log(response.data);
-      setPersons(response.data);
-    });
+    personService
+      .getAll()
+      .then((allPersons) => {
+        setPersons(allPersons);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
 
   const addPerson = (event) => {
     event.preventDefault();
-    if (persons.filter((item) => item.name === newName).length > 0) {
-      window.alert(`${newName} is already added to phonebook`);
-      setNewName("");
-      setNewNumber("");
-      return;
-    }
     const isNameAndNumberFilled = newName && newNumber;
 
     if (isNameAndNumberFilled) {
       const newPerson = { name: newName, number: newNumber };
-      setPersons(persons.concat(newPerson));
+      const personInDB = persons.find((person) => person.name === newName);
+      const shouldUpdateExistingPerson =
+        personInDB && newNumber !== personInDB.number;
+      if (shouldUpdateExistingPerson) {
+        if (
+          window.confirm(
+            `${personInDB.name} is already added to phonebook, replace the old number with a new one?`
+          )
+        ) {
+          const changePerson = { ...personInDB, number: newNumber };
+          personService
+            .update(personInDB.id, changePerson)
+            .then((returnedPerson) => {
+              setPersons(
+                persons.map((person) =>
+                  personInDB.id !== person.id ? person : returnedPerson
+                )
+              );
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      }
+      if (!personInDB) {
+        personService
+          .create(newPerson)
+          .then((returnedPerson) => {
+            setPersons(persons.concat(returnedPerson));
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     } else {
       window.alert("Please fill both fields for name and number.");
     }
     setNewName("");
     setNewNumber("");
+  };
+
+  const removePerson = (person) => {
+    if (window.confirm(`Do you want to delete ${person.name}?`)) {
+      personService
+        .remove(person.id)
+        .then(() => {
+          setPersons(persons.filter((p) => p.id !== person.id));
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   const handleNewPersonChange = (event) => {
@@ -64,7 +106,11 @@ const App = () => {
         handleNewNumberChange={handleNewNumberChange}
       />
       <h3>Numbers</h3>
-      <ShowPersons persons={persons} filter={filter} />
+      <ShowPersons
+        persons={persons}
+        filter={filter}
+        onDeleteHandler={removePerson}
+      />
     </div>
   );
 };

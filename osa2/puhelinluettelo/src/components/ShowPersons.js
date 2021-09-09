@@ -1,4 +1,5 @@
 import React from "react";
+import Button from "./Button";
 
 const filterPersons = (persons, filter) => {
   return persons
@@ -14,7 +15,7 @@ const filterPersons = (persons, filter) => {
     ));
 };
 
-const ShowPersons = ({ persons, filter }) => {
+const ShowPersons = ({ persons, filter, onDeleteHandler }) => {
   return (
     <div>
       {filter ? (
@@ -22,9 +23,15 @@ const ShowPersons = ({ persons, filter }) => {
       ) : (
         <div>
           {persons.map((person) => (
-            <p key={person.name}>
-              {person.name} {person.number}
-            </p>
+            <div key={person.name}>
+              <p>
+                {person.name} {person.number}
+                <Button
+                  text={"delete"}
+                  onButtonClick={() => onDeleteHandler(person)}
+                />
+              </p>
+            </div>
           ))}
         </div>
       )}
