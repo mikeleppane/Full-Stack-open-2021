@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const personDBURL = "http://localhost:3001";
+const personDBURL = "/api";
 const axiosInstance = axios.create({
   baseURL: personDBURL,
   timeout: 5000,
