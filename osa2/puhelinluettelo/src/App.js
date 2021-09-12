@@ -90,7 +90,16 @@ const App = () => {
             setPersons(persons.concat(returnedPerson));
           })
           .catch((error) => {
-            console.log(error);
+            setNotification({
+              type: "error",
+              message: String(error.response.data.error),
+            });
+            setTimeout(() => {
+              setNotification({
+                type: null,
+                message: null,
+              });
+            }, 5000);
           });
       }
     } else {
