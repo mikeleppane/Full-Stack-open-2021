@@ -24,30 +24,30 @@ const mostBlogs = (blogs) => {
   if (blogs.length === 0) {
     return {};
   }
-  let mostBlogs = _(blogs)
+  return _.chain(blogs)
     .groupBy("author")
     .map((objs, key) => ({
       author: key,
       blogs: objs.length,
     }))
+    .orderBy("blogs", "desc")
+    .head()
     .value();
-  mostBlogs = _.orderBy(mostBlogs, "blogs", "desc");
-  return _.head(mostBlogs);
 };
 
 const mostLikes = (blogs) => {
   if (blogs.length === 0) {
     return {};
   }
-  let mostLikes = _(blogs)
+  return _.chain(blogs)
     .groupBy("author")
     .map((objs, key) => ({
       author: key,
       likes: _.sumBy(objs, "likes"),
     }))
+    .orderBy("likes", "desc")
+    .head()
     .value();
-  mostLikes = _.orderBy(mostLikes, "likes", "desc");
-  return _.head(mostLikes);
 };
 
 module.exports = {
