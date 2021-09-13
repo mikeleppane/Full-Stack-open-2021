@@ -3,6 +3,8 @@ const supertest = require("supertest");
 const app = require("../app");
 const api = supertest(app);
 const Blog = require("../models/blog");
+const User = require("../models/user");
+const bcrypt = require("bcrypt");
 const test_helper = require("./test_helper");
 const _ = require("lodash");
 
@@ -149,6 +151,98 @@ describe("PUT request tests for /api/blogs", () => {
       .put(`/api/blogs/${blogToBeUpdated.id}`)
       .send({ author: "Rob Pike" })
       .expect(400);
+  });
+});
+
+describe("Tests for user control", () => {
+  beforeEach(async () => {
+    await User.deleteMany({});
+
+    const passwordHash = await bcrypt.hash("passwdsecret", 10);
+    const user = new User({ username: "admin", passwordHash });
+
+    await user.save();
+  });
+
+  test("new username should be created", async () => {
+    const usersAtStart = await test_helper.usersInDb();
+
+    const newUser = {
+      username: "mleppane",
+      name: "Mikko Leppänen",
+      password: "oma_salasana",
+    };
+
+    await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+
+    const usersAtEnd = await test_helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length + 1);
+
+    const usernames = usersAtEnd.map((u) => u.username);
+    expect(usernames).toContain(newUser.username);
+  });
+
+  test("400 status code should be raised if username is already taken", async () => {
+    const usersAtStart = await test_helper.usersInDb();
+
+    const newUser = {
+      username: "admin",
+      name: "Main user",
+      password: "user_password",
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(result.body.error).toContain("`username` to be unique");
+
+    const usersAtEnd = await test_helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
+  test("400 status code should be raised if username is not valid", async () => {
+    const usersAtStart = await test_helper.usersInDb();
+
+    const newUser = {
+      username: "ad",
+      name: "Main user",
+      password: "user_password",
+    };
+
+    await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    const usersAtEnd = await test_helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
+  test("400 status code should be raised if password is not valid", async () => {
+    const usersAtStart = await test_helper.usersInDb();
+
+    const newUser = {
+      username: "new_user",
+      name: "Main user",
+      password: "12",
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(result.body.error).toContain("Given password is not valid");
+
+    const usersAtEnd = await test_helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
   });
 });
 
