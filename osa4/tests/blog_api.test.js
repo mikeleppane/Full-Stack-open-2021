@@ -21,7 +21,7 @@ describe("GET request tests for /api/blogs", () => {
       .expect("Content-Type", /application\/json/);
   });
 
-  test("all notes should be returned", async () => {
+  test("all blogs should be returned", async () => {
     const response = await api.get("/api/blogs");
     expect(response.body).toHaveLength(test_helper.initialBlogs.length);
   });
@@ -48,26 +48,50 @@ describe("GET request tests for /api/blogs", () => {
   test("should fail with statuscode 400 if id is invalid", async () => {
     const invalidId = "555555aaafffff66634";
 
-    await api.get(`/api/notes/${invalidId}`).expect(400);
+    await api.get(`/api/blogs/${invalidId}`).expect(404);
   });
 });
 
+let token = null;
+
+const testSetupForContentChange = async () => {
+  await Blog.deleteMany({});
+  await User.deleteMany({});
+
+  const passwordHash = await bcrypt.hash("passwdsecret", 10);
+  const user = new User({
+    username: "test_user",
+    name: "User",
+    passwordHash,
+  });
+  await user.save();
+  const response = await api
+    .post("/api/login")
+    .send({ username: "test_user", password: "passwdsecret" });
+  token = response.body.token;
+  for (let blog of test_helper.initialBlogs) {
+    await api
+      .post("/api/blogs")
+      .set({ Authorization: `bearer ${token}` })
+      .send(blog);
+  }
+};
+
 describe("POST request tests for /api/blogs", () => {
   beforeEach(async () => {
-    await Blog.deleteMany({});
-    await Blog.insertMany(test_helper.initialBlogs);
+    await testSetupForContentChange();
   });
 
-  test("a valid note can be added", async () => {
+  test("a valid blog can be added", async () => {
     const newBlog = {
       title: "CodeSmell",
       author: "Martin Fowler",
       url: "https://martinfowler.com/bliki/CodeSmell.html",
       likes: "5",
     };
-
     await api
       .post("/api/blogs")
+      .set({ Authorization: `bearer ${token}` })
       .send(newBlog)
       .expect(201)
       .expect("Content-Type", /application\/json/);
@@ -88,6 +112,7 @@ describe("POST request tests for /api/blogs", () => {
 
     await api
       .post("/api/blogs")
+      .set({ Authorization: `bearer ${token}` })
       .send(newBlog)
       .expect(201)
       .expect("Content-Type", /application\/json/);
@@ -101,34 +126,68 @@ describe("POST request tests for /api/blogs", () => {
       author: "Martin Fowler",
     };
 
-    await api.post("/api/blogs").send(newBlog).expect(400);
+    await api
+      .post("/api/blogs")
+      .set({ Authorization: `bearer ${token}` })
+      .send(newBlog)
+      .expect(400);
+  });
+
+  test("new blog should not be added if token is invalid", async () => {
+    const newBlog = {
+      title: "CodeSmell",
+      author: "Martin Fowler",
+      url: "https://martinfowler.com/bliki/CodeSmell.html",
+      likes: "5",
+    };
+    const response = await api
+      .post("/api/blogs")
+      .set({ Authorization: `bearer ${token + "1"}` })
+      .send(newBlog)
+      .expect(401);
+
+    const blogs = await test_helper.blogsInDb();
+    expect(blogs).toHaveLength(test_helper.initialBlogs.length);
+
+    expect(response.body.error).toContain("token missing or invalid");
   });
 });
 
 describe("DELETE request tests for /api/blogs", () => {
   beforeEach(async () => {
-    await Blog.deleteMany({});
-    await Blog.insertMany(test_helper.initialBlogs);
+    await testSetupForContentChange();
   });
 
   test("status code 204 should be returned after blog is deleted", async () => {
     const blogs = await test_helper.blogsInDb();
     const blogToBeDeleted = blogs[0];
-    await api.delete(`/api/blogs/${blogToBeDeleted.id}`).expect(204);
+    await api
+      .delete(`/api/blogs/${blogToBeDeleted.id}`)
+      .set({ Authorization: `bearer ${token}` })
+      .expect(204);
 
     const blogsAfter = await test_helper.blogsInDb();
     expect(blogsAfter).toHaveLength(test_helper.initialBlogs.length - 1);
+  });
 
-    const titles = blogsAfter.map((blog) => blog.title);
+  test("blog should not be deleted if token is invalid", async () => {
+    const blogs = await test_helper.blogsInDb();
+    const blogToBeDeleted = blogs[0];
+    const response = await api
+      .delete(`/api/blogs/${blogToBeDeleted.id}`)
+      .set({ Authorization: `bearer` })
+      .expect(401);
 
-    expect(titles).not.toContainEqual(blogToBeDeleted.title);
+    const blogsAfter = await test_helper.blogsInDb();
+    expect(blogsAfter).toHaveLength(test_helper.initialBlogs.length);
+
+    expect(response.body.error).toContain("token missing or invalid");
   });
 });
 
 describe("PUT request tests for /api/blogs", () => {
   beforeEach(async () => {
-    await Blog.deleteMany({});
-    await Blog.insertMany(test_helper.initialBlogs);
+    await testSetupForContentChange();
   });
 
   test("existing blog should be updated", async () => {
@@ -136,6 +195,7 @@ describe("PUT request tests for /api/blogs", () => {
     const blogToBeUpdated = blogs[0];
     await api
       .put(`/api/blogs/${blogToBeUpdated.id}`)
+      .set({ Authorization: `bearer ${token}` })
       .send({ likes: 11 })
       .expect(200);
 
@@ -149,6 +209,7 @@ describe("PUT request tests for /api/blogs", () => {
     const blogToBeUpdated = blogs[0];
     await api
       .put(`/api/blogs/${blogToBeUpdated.id}`)
+      .set({ Authorization: `bearer ${token}` })
       .send({ author: "Rob Pike" })
       .expect(400);
   });
