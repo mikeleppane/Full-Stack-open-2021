@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import blogService from "../services/blogs";
+import PropTypes from "prop-types";
 
 const handleBlogSubmit = async (
   event,
@@ -69,6 +70,10 @@ const CreateNewBlog = ({ setNotification }) => {
       </form>
     </div>
   );
+};
+
+CreateNewBlog.propTypes = {
+  setNotification: PropTypes.func.isRequired,
 };
 
 export default CreateNewBlog;

@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 const notificationStyle = {
   color: "green",
@@ -25,6 +26,11 @@ const Notification = ({ message, type }) => {
     return <div style={usedStyle}>{message}</div>;
   }
   return null;
+};
+
+Notification.propTypes = {
+  message: PropTypes.oneOfType([PropTypes.string, PropTypes.any]),
+  type: PropTypes.oneOfType([PropTypes.string, PropTypes.any]),
 };
 
 export default Notification;

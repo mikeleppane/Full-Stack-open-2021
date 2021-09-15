@@ -1,5 +1,6 @@
 import React from "react";
 import Blog from "./Blog";
+import PropTypes from "prop-types";
 
 const sortedBlogs = (blogs) => {
   blogs.sort((a, b) => {
@@ -15,5 +16,9 @@ const ShowBlogs = ({ blogs }) => (
     ))}
   </div>
 );
+
+ShowBlogs.propTypes = {
+  blogs: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
 
 export default ShowBlogs;

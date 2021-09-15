@@ -10,7 +10,8 @@
   "plugins": [
     "import",
     "react",
-    "jsx-a11y"
+    "jsx-a11y",
+    "jest"
   ],
   "parser": "babel-eslint",
   "parserOptions": {
@@ -26,7 +27,8 @@
     "node": true,
     "jest": true,
     "commonjs": true,
-    "es2021": true
+    "es2021": true,
+    "jest/globals": true
   },
   "rules": {
     "react/prop-types": 0,

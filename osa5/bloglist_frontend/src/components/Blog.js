@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Button from "./Button";
 import blogService from "../services/blogs";
+import PropTypes from "prop-types";
 
 let currentLikes = 0;
 
@@ -88,5 +89,9 @@ const Blog = ({ blog }) => {
       </div>
     </div>
   );
+};
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
 };
 export default Blog;

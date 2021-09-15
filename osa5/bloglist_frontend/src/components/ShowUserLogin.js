@@ -1,5 +1,6 @@
 import React from "react";
 import Button from "./Button";
+import PropTypes from "prop-types";
 
 const ShowUserLogin = ({ name }) => (
   <div>
@@ -16,5 +17,9 @@ const ShowUserLogin = ({ name }) => (
     </p>
   </div>
 );
+
+ShowUserLogin.propTypes = {
+  name: PropTypes.string.isRequired,
+};
 
 export default ShowUserLogin;
