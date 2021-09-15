@@ -6,11 +6,10 @@ import blogService from "./services/blogs";
 import ShowUserLogin from "./components/ShowUserLogin";
 import ShowBlogs from "./components/ShowBlogs";
 import CreateNewBlog from "./components/CreateNewBlog";
+import Togglable from "./components/Togglable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [newBlog, setNewBlog] = useState("");
-  // const [showAll, setShowAll] = useState(true);
   const [notification, setNotification] = useState({ type: "", message: "" });
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -19,18 +18,6 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
   }, []);
-
-  useEffect(() => {
-    if (newBlog) {
-      setNotification({
-        message: `a new blog ${newBlog.title} by ${newBlog.author} added`,
-        type: "success",
-      });
-      setTimeout(() => {
-        setNotification({ message: null, type: null });
-      }, 5000);
-    }
-  }, [newBlog]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
@@ -89,7 +76,9 @@ const App = () => {
         <div>
           <h2>Blogs</h2>
           <ShowUserLogin name={user.name} />
-          <CreateNewBlog setNewBlog={setNewBlog} />
+          <Togglable buttonLabel={"create new blog"}>
+            <CreateNewBlog setNotification={setNotification} />
+          </Togglable>
           <ShowBlogs blogs={blogs} />
         </div>
       )}

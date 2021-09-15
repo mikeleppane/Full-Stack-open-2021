@@ -1,33 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import blogService from "../services/blogs";
 
-let title = "";
-let author = "";
-let url = "";
-
-const handleBlogSubmit = async (event, setNewBlog) => {
+const handleBlogSubmit = async (
+  event,
+  newBlog,
+  setNewBlog,
+  setNotification
+) => {
   event.preventDefault();
-  const newBlog = { title: title, author: author, url: url };
   const response = await blogService.create(newBlog);
-  setNewBlog(response);
+  if (newBlog) {
+    setNotification({
+      message: `a new blog ${newBlog.title} by ${newBlog.author} added`,
+      type: "success",
+    });
+    setTimeout(() => {
+      setNotification({ message: null, type: null });
+    }, 5000);
+  }
   console.log(response);
-  event.target.title.value = "";
-  event.target.author.value = "";
-  event.target.url.value = "";
+  setNewBlog({ title: "", author: "", url: "" });
 };
 
-const CreateNewBlog = ({ setNewBlog }) => {
+const CreateNewBlog = ({ setNotification }) => {
+  const [newBlog, setNewBlog] = useState({ title: "", author: "", url: "" });
   return (
     <div>
       <h2>Create new</h2>
-      <form onSubmit={(event) => handleBlogSubmit(event, setNewBlog)}>
+      <form
+        onSubmit={(event) =>
+          handleBlogSubmit(event, newBlog, setNewBlog, setNotification)
+        }
+      >
         <div>
           title:
           <input
             type="text"
             name="title"
+            value={newBlog.title}
             onChange={({ target }) => {
-              title = target.value;
+              setNewBlog({ ...newBlog, title: target.value });
             }}
           />
         </div>
@@ -36,8 +48,9 @@ const CreateNewBlog = ({ setNewBlog }) => {
           <input
             type="text"
             name="author"
+            value={newBlog.author}
             onChange={({ target }) => {
-              author = target.value;
+              setNewBlog({ ...newBlog, author: target.value });
             }}
           />
         </div>
@@ -46,8 +59,9 @@ const CreateNewBlog = ({ setNewBlog }) => {
           <input
             type="text"
             name="url"
+            value={newBlog.url}
             onChange={({ target }) => {
-              url = target.value;
+              setNewBlog({ ...newBlog, url: target.value });
             }}
           />
         </div>
