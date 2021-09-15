@@ -57,6 +57,20 @@ const App = () => {
     setPassword(target.value);
   };
 
+  const createBlog = async (blog) => {
+    const response = await blogService.create(blog);
+    if (response) {
+      setNotification({
+        message: `a new blog ${response.title} by ${response.author} added`,
+        type: "success",
+      });
+      setTimeout(() => {
+        setNotification({ message: null, type: null });
+      }, 5000);
+    }
+    console.log(response);
+  };
+
   return (
     <div>
       <Notification message={notification.message} type={notification.type} />
@@ -77,7 +91,7 @@ const App = () => {
           <h2>Blogs</h2>
           <ShowUserLogin name={user.name} />
           <Togglable buttonLabel={"create new blog"}>
-            <CreateNewBlog setNotification={setNotification} />
+            <CreateNewBlog createBlog={createBlog} />
           </Togglable>
           <ShowBlogs blogs={blogs} />
         </div>

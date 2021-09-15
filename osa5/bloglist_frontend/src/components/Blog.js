@@ -12,7 +12,6 @@ const ShowBlogInfo = ({ blog }) => {
   const [likes, setLikes] = useState(currentLikes);
 
   const handleButtonClick = () => {
-    console.log("here");
     setShowAll(!showAll);
 
     setButtonText(showAll ? "view" : "hide");

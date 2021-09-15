@@ -1,41 +1,22 @@
 import React, { useState } from "react";
-import blogService from "../services/blogs";
 import PropTypes from "prop-types";
 
-const handleBlogSubmit = async (
-  event,
-  newBlog,
-  setNewBlog,
-  setNotification
-) => {
-  event.preventDefault();
-  const response = await blogService.create(newBlog);
-  if (newBlog) {
-    setNotification({
-      message: `a new blog ${newBlog.title} by ${newBlog.author} added`,
-      type: "success",
-    });
-    setTimeout(() => {
-      setNotification({ message: null, type: null });
-    }, 5000);
-  }
-  console.log(response);
-  setNewBlog({ title: "", author: "", url: "" });
-};
-
-const CreateNewBlog = ({ setNotification }) => {
+const CreateNewBlog = ({ createBlog }) => {
   const [newBlog, setNewBlog] = useState({ title: "", author: "", url: "" });
+  const handleBlogSubmit = (event) => {
+    event.preventDefault();
+    createBlog(newBlog);
+    setNewBlog({ title: "", author: "", url: "" });
+  };
+
   return (
     <div>
       <h2>Create new</h2>
-      <form
-        onSubmit={(event) =>
-          handleBlogSubmit(event, newBlog, setNewBlog, setNotification)
-        }
-      >
+      <form id="createBlogForm" onSubmit={handleBlogSubmit}>
         <div>
           title:
           <input
+            id="title_input"
             type="text"
             name="title"
             value={newBlog.title}
@@ -47,6 +28,7 @@ const CreateNewBlog = ({ setNotification }) => {
         <div>
           author:
           <input
+            id="author_input"
             type="text"
             name="author"
             value={newBlog.author}
@@ -58,6 +40,7 @@ const CreateNewBlog = ({ setNotification }) => {
         <div>
           url:
           <input
+            id="url_input"
             type="text"
             name="url"
             value={newBlog.url}
@@ -73,7 +56,7 @@ const CreateNewBlog = ({ setNotification }) => {
 };
 
 CreateNewBlog.propTypes = {
-  setNotification: PropTypes.func.isRequired,
+  createBlog: PropTypes.func.isRequired,
 };
 
 export default CreateNewBlog;
