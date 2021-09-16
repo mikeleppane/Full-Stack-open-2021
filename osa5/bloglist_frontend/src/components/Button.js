@@ -1,9 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const Button = ({ text, onButtonClick }) => {
+const Button = ({ id, text, onButtonClick }) => {
   return (
-    <button style={{ margin: "5px" }} onClick={onButtonClick}>
+    <button id={id} style={{ margin: "5px" }} onClick={onButtonClick}>
       {text}
     </button>
   );

@@ -59,6 +59,7 @@ const App = () => {
 
   const createBlog = async (blog) => {
     const response = await blogService.create(blog);
+    blogService.getAll().then((blogs) => setBlogs(blogs));
     if (response) {
       setNotification({
         message: `a new blog ${response.title} by ${response.author} added`,
@@ -68,7 +69,16 @@ const App = () => {
         setNotification({ message: null, type: null });
       }, 5000);
     }
-    console.log(response);
+    console.log("Response for blog creation: ", response);
+  };
+
+  const handleRemoveButtonClick = async (blog) => {
+    if (window.confirm(`Do you want to remove blog ${blog.title}?`)) {
+      blogService.remove(blog.id).then((response) => {
+        console.log(response);
+        blogService.getAll().then((blogs) => setBlogs(blogs));
+      });
+    }
   };
 
   return (
@@ -93,7 +103,7 @@ const App = () => {
           <Togglable buttonLabel={"create new blog"}>
             <CreateNewBlog createBlog={createBlog} />
           </Togglable>
-          <ShowBlogs blogs={blogs} />
+          <ShowBlogs blogs={blogs} handleBlogRemove={handleRemoveButtonClick} />
         </div>
       )}
     </div>

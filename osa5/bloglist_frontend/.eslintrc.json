@@ -5,13 +5,15 @@
     "plugin:react/recommended",
     "plugin:jsx-a11y/recommended",
     "plugin:react-hooks/recommended",
+    "plugin:cypress/recommended",
     "prettier"
   ],
   "plugins": [
     "import",
     "react",
     "jsx-a11y",
-    "jest"
+    "jest",
+    "cypress"
   ],
   "parser": "babel-eslint",
   "parserOptions": {
@@ -28,7 +30,8 @@
     "jest": true,
     "commonjs": true,
     "es2021": true,
-    "jest/globals": true
+    "jest/globals": true,
+    "cypress/globals": true
   },
   "rules": {
     "react/prop-types": 0,

@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 
 let currentLikes = 0;
 
-const ShowBlogInfo = ({ blog }) => {
+const ShowBlogInfo = ({ blog, handleBlogRemove }) => {
   currentLikes = blog.likes;
   const [buttonText, setButtonText] = useState("view");
   const [showAll, setShowAll] = useState(false);
@@ -29,12 +29,6 @@ const ShowBlogInfo = ({ blog }) => {
     setLikes(likes + 1);
     console.log(response);
   };
-  const handleRemoveButtonClick = async () => {
-    if (window.confirm(`Do you want to remove blog ${blog.title}?`)) {
-      const response = await blogService.remove(blog.id);
-      console.log(response);
-    }
-  };
 
   const isLoggedInUserBlogOwner = () => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
@@ -50,21 +44,33 @@ const ShowBlogInfo = ({ blog }) => {
 
   return (
     <div>
-      <p>
+      <p id="blog-title">
         {blog.title}
-        <Button text={buttonText} onButtonClick={handleButtonClick} />
+        <Button
+          id={"show-blog-button"}
+          text={buttonText}
+          onButtonClick={handleButtonClick}
+        />
       </p>
       {showAll && (
         <div>
           <p>{blog.url}</p>
-          <p>
+          <p id="likes">
             likes {likes}
-            <Button text={"like"} onButtonClick={handleLikeButtonClick} />
+            <Button
+              id={"like-button"}
+              text={"like"}
+              onButtonClick={handleLikeButtonClick}
+            />
           </p>
           <p>{blog.user.name}</p>
           {isLoggedInUserBlogOwner() && (
             <div>
-              <Button text={"remove"} onButtonClick={handleRemoveButtonClick} />
+              <Button
+                id={"remove-button"}
+                text={"remove"}
+                onButtonClick={() => handleBlogRemove(blog)}
+              />
             </div>
           )}
         </div>
@@ -73,7 +79,7 @@ const ShowBlogInfo = ({ blog }) => {
   );
 };
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, handleBlogRemove }) => {
   const blogStyle = {
     paddingTop: 5,
     paddingLeft: 2,
@@ -84,7 +90,7 @@ const Blog = ({ blog }) => {
   return (
     <div style={blogStyle}>
       <div>
-        <ShowBlogInfo blog={blog} />
+        <ShowBlogInfo blog={blog} handleBlogRemove={handleBlogRemove} />
       </div>
     </div>
   );

@@ -23,7 +23,11 @@ const Notification = ({ message, type }) => {
     usedStyle = { ...notificationStyle, color: "red" };
   }
   if (usedStyle) {
-    return <div style={usedStyle}>{message}</div>;
+    return (
+      <div id="notification" style={usedStyle}>
+        {message}
+      </div>
+    );
   }
   return null;
 };
