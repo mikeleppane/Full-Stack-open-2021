@@ -79,7 +79,7 @@ describe("Blog app", function () {
         "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.htm"
       ).should("not.exist");
     });
-    it.only("Blogs should be sorted by likes", function () {
+    it("Blogs should be sorted by likes", function () {
       cy.contains("Mikko Leppänen logged in");
       cy.get("#create-new-blog-button").click();
       cy.get("#title_input").type("TDD harms architecture");
