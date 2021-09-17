@@ -1,33 +1,30 @@
 const initialState = { message: "" };
 
-export const newNotificationCreator = (message) => {
-  return {
-    type: "NEW_NOTIFICATION",
-    data: {
-      message,
-    },
+export const setNotificationCreator = (message, time = 5) => {
+  return async (dispatch) => {
+    setTimeout(() => {
+      dispatch({
+        type: "CLEAR_NOTIFICATION",
+        data: {
+          message: "",
+        },
+      });
+    }, time * 1000);
+    dispatch({
+      type: "SET_NOTIFICATION",
+      data: {
+        message,
+      },
+    });
   };
-};
-
-export const removeNotificationCreator = () => {
-  return {
-    type: "REMOVE_NOTIFICATION",
-    data: {
-      message: "",
-    },
-  };
-};
-
-const handleNotificationRemoval = () => {
-  return { message: "" };
 };
 
 const notificationReducer = (state = initialState, action) => {
   switch (action.type) {
-    case "NEW_NOTIFICATION":
+    case "SET_NOTIFICATION":
       return { ...action.data };
-    case "REMOVE_NOTIFICATION":
-      return handleNotificationRemoval();
+    case "CLEAR_NOTIFICATION":
+      return { ...action.data };
     default:
       return state;
   }
