@@ -1,28 +1,39 @@
-const initialState = { message: "" };
+const initialState = { message: "", timeoutHandle: null };
 
 export const setNotificationCreator = (message, time = 5) => {
   return async (dispatch) => {
-    setTimeout(() => {
+    const timeoutHandle = setTimeout(() => {
       dispatch({
         type: "CLEAR_NOTIFICATION",
         data: {
           message: "",
+          timeoutHandle: null,
         },
       });
     }, time * 1000);
     dispatch({
       type: "SET_NOTIFICATION",
       data: {
-        message,
+        message: message,
+        timeoutHandle: timeoutHandle,
       },
     });
   };
 };
 
+const setTimeoutHandler = (state, data) => {
+  const isPreviousTimeoutRunning =
+    state.timeoutHandle && state.timeoutHandle !== data.timeoutHandle;
+  if (isPreviousTimeoutRunning) {
+    clearTimeout(state.timeoutHandle);
+  }
+  return { ...data };
+};
+
 const notificationReducer = (state = initialState, action) => {
   switch (action.type) {
     case "SET_NOTIFICATION":
-      return { ...action.data };
+      return setTimeoutHandler(state, action.data);
     case "CLEAR_NOTIFICATION":
       return { ...action.data };
     default:
