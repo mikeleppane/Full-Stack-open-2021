@@ -5,6 +5,7 @@
     "plugin:react/recommended",
     "plugin:jsx-a11y/recommended",
     "plugin:react-hooks/recommended",
+    "plugin:react-redux/recommended",
     "plugin:cypress/recommended",
     "prettier"
   ],
@@ -13,7 +14,8 @@
     "react",
     "jsx-a11y",
     "jest",
-    "cypress"
+    "cypress",
+    "react-redux"
   ],
   "parser": "babel-eslint",
   "parserOptions": {
@@ -39,7 +41,10 @@
     "react/react-in-jsx-scope": "off",
     "indent": [
       "error",
-      2
+      2,
+      {
+        "SwitchCase": 1
+      }
     ],
     "linebreak-style": [
       "error",
@@ -58,7 +63,8 @@
         "after": true
       }
     ],
-    "no-console": 0
+    "no-console": 0,
+    "react-redux/connect-prefer-named-arguments": 2
   },
   "settings": {
     "react": {

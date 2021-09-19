@@ -7,10 +7,14 @@ import ShowUserLogin from "./components/ShowUserLogin";
 import ShowBlogs from "./components/ShowBlogs";
 import CreateNewBlog from "./components/CreateNewBlog";
 import Togglable from "./components/Togglable";
+import { useDispatch, useSelector } from "react-redux";
+import { setNotificationCreator } from "./reducers/notificationReducer";
 
 const App = () => {
+  const dispatch = useDispatch();
+  const notifierSelector = (state) => state.notification;
+  const notification = useSelector(notifierSelector);
   const [blogs, setBlogs] = useState([]);
-  const [notification, setNotification] = useState({ type: "", message: "" });
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
@@ -41,9 +45,9 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      setNotification({ message: "wrong username or password", type: "error" });
+      dispatch(setNotificationCreator("wrong username or password", "error"));
       setTimeout(() => {
-        setNotification({ message: null, type: null });
+        dispatch(setNotificationCreator(null, null));
       }, 5000);
     }
     console.log("logging in with", username, password);
@@ -58,16 +62,24 @@ const App = () => {
   };
 
   const createBlog = async (blog) => {
+    if (!blog.title || !blog.author || !blog.url) {
+      dispatch(
+        setNotificationCreator(
+          `blog title, author and url must be set before creation!`,
+          "error"
+        )
+      );
+      return;
+    }
     const response = await blogService.create(blog);
     blogService.getAll().then((blogs) => setBlogs(blogs));
     if (response) {
-      setNotification({
-        message: `a new blog ${response.title} by ${response.author} added`,
-        type: "success",
-      });
-      setTimeout(() => {
-        setNotification({ message: null, type: null });
-      }, 5000);
+      dispatch(
+        setNotificationCreator(
+          `a new blog ${response.title} by ${response.author} added`,
+          "success"
+        )
+      );
     }
     console.log("Response for blog creation: ", response);
   };
