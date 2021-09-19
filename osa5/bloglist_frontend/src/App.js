@@ -9,19 +9,25 @@ import CreateNewBlog from "./components/CreateNewBlog";
 import Togglable from "./components/Togglable";
 import { useDispatch, useSelector } from "react-redux";
 import { setNotificationCreator } from "./reducers/notificationReducer";
+import {
+  initBlogsCreator,
+  newBlogCreator,
+  removeBlogCreator,
+} from "./reducers/blogReducer";
 
 const App = () => {
   const dispatch = useDispatch();
   const notifierSelector = (state) => state.notification;
+  const blogSelector = (state) => state.blog;
   const notification = useSelector(notifierSelector);
-  const [blogs, setBlogs] = useState([]);
+  const blogs = useSelector(blogSelector);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
+    dispatch(initBlogsCreator());
+  }, [dispatch]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
@@ -71,25 +77,26 @@ const App = () => {
       );
       return;
     }
-    const response = await blogService.create(blog);
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-    if (response) {
-      dispatch(
-        setNotificationCreator(
-          `a new blog ${response.title} by ${response.author} added`,
-          "success"
-        )
-      );
-    }
-    console.log("Response for blog creation: ", response);
+    dispatch(newBlogCreator(blog))
+      .then((response) => {
+        console.log(response);
+        dispatch(
+          setNotificationCreator(
+            `a new blog ${blog.title} by ${blog.author} added`,
+            "success"
+          )
+        );
+      })
+      .catch((error) => console.log(error));
   };
 
   const handleRemoveButtonClick = async (blog) => {
     if (window.confirm(`Do you want to remove blog ${blog.title}?`)) {
-      blogService.remove(blog.id).then((response) => {
-        console.log(response);
-        blogService.getAll().then((blogs) => setBlogs(blogs));
-      });
+      dispatch(removeBlogCreator(blog.id))
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => console.log(error));
     }
   };
 
