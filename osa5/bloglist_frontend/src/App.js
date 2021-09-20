@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Notification from "./components/Notification";
 import Login from "./components/Login";
-import loginService from "./services/login";
-import blogService from "./services/blogs";
 import ShowUserLogin from "./components/ShowUserLogin";
 import ShowBlogs from "./components/ShowBlogs";
 import CreateNewBlog from "./components/CreateNewBlog";
@@ -14,6 +12,7 @@ import {
   newBlogCreator,
   removeBlogCreator,
 } from "./reducers/blogReducer";
+import { loggedInUserCreator, userCreator } from "./reducers/userReducer";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -21,42 +20,26 @@ const App = () => {
   const blogSelector = (state) => state.blog;
   const notification = useSelector(notifierSelector);
   const blogs = useSelector(blogSelector);
+  const userSelector = (state) => state.user;
+  const user = useSelector(userSelector);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
 
   useEffect(() => {
     dispatch(initBlogsCreator());
   }, [dispatch]);
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
-    }
-  }, []);
+    dispatch(loggedInUserCreator());
+  }, [dispatch]);
 
   const handleUserLogin = async (event) => {
     event.preventDefault();
-    try {
-      const user = await loginService.login({
-        username,
-        password,
-      });
-      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
-      setUser(user);
-      blogService.setToken(user.token);
-      setUsername("");
-      setPassword("");
-    } catch (exception) {
-      dispatch(setNotificationCreator("wrong username or password", "error"));
-      setTimeout(() => {
-        dispatch(setNotificationCreator(null, null));
-      }, 5000);
-    }
-    console.log("logging in with", username, password);
+    dispatch(userCreator(username, password))
+      .then(() => {})
+      .catch((error) => console.log(error));
+    setUsername("");
+    setPassword("");
   };
 
   const handleUsernameChange = ({ target }) => {
@@ -118,7 +101,7 @@ const App = () => {
       {user !== null && (
         <div>
           <h2>Blogs</h2>
-          <ShowUserLogin name={user.name} />
+          <ShowUserLogin name={`${user.name}`} />
           <Togglable buttonLabel={"create new blog"}>
             <CreateNewBlog createBlog={createBlog} />
           </Togglable>
