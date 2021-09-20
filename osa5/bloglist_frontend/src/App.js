@@ -13,6 +13,9 @@ import {
   removeBlogCreator,
 } from "./reducers/blogReducer";
 import { loggedInUserCreator, userCreator } from "./reducers/userReducer";
+import { Route, Switch } from "react-router-dom";
+import ShowUsers from "./components/ShowUsers";
+import IndividualUser from "./components/IndividualUser";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -102,10 +105,23 @@ const App = () => {
         <div>
           <h2>Blogs</h2>
           <ShowUserLogin name={`${user.name}`} />
-          <Togglable buttonLabel={"create new blog"}>
-            <CreateNewBlog createBlog={createBlog} />
-          </Togglable>
-          <ShowBlogs blogs={blogs} handleBlogRemove={handleRemoveButtonClick} />
+          <Switch>
+            <Route path="/users/:id">
+              <IndividualUser />
+            </Route>
+            <Route path="/users">
+              <ShowUsers />
+            </Route>
+            <Route path="/">
+              <Togglable buttonLabel={"create new blog"}>
+                <CreateNewBlog createBlog={createBlog} />
+              </Togglable>
+              <ShowBlogs
+                blogs={blogs}
+                handleBlogRemove={handleRemoveButtonClick}
+              />
+            </Route>
+          </Switch>
         </div>
       )}
     </div>

@@ -12,7 +12,17 @@ usersRouter.get("/", async (request, response) => {
   response.json(users.map((u) => u.toJSON()));
 });
 
-usersRouter.post("/", async (request, response) => {
+usersRouter.get("/:id", async (request, response) => {
+  const user = await User.findById(request.params.id).populate("blogs", {
+    title: 1,
+    author: 1,
+    url: 1,
+    likes: 1,
+  });
+  response.json(user.toJSON());
+});
+
+usersRouter.post("/:id", async (request, response) => {
   const body = request.body;
 
   const isPasswordValid = body.password && body.password.length >= 3;
