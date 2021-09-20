@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import Button from "./Button";
-import blogService from "../services/blogs";
 import PropTypes from "prop-types";
-
-let currentLikes = 0;
+import { likeBlogCreator } from "../reducers/blogReducer";
+import { useDispatch, useSelector } from "react-redux";
 
 const ShowBlogInfo = ({ blog, handleBlogRemove }) => {
-  currentLikes = blog.likes;
   const [buttonText, setButtonText] = useState("view");
   const [showAll, setShowAll] = useState(false);
-  const [likes, setLikes] = useState(currentLikes);
+  const dispatch = useDispatch();
+  const blogSelector = (state) => state.blog;
+  const blogs = useSelector(blogSelector);
+  const currentLikes = blogs.find((b) => b.id === blog.id).likes;
 
   const handleButtonClick = () => {
     setShowAll(!showAll);
@@ -22,12 +23,14 @@ const ShowBlogInfo = ({ blog, handleBlogRemove }) => {
       title: blog.title,
       author: blog.author,
       url: blog.url,
-      likes: likes + 1,
+      likes: blog.likes + 1,
       user: blog.user.id,
     };
-    const response = await blogService.update(blog.id, updatedBlog);
-    setLikes(likes + 1);
-    console.log(response);
+    dispatch(likeBlogCreator(blog.id, updatedBlog))
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => console.log(error));
   };
 
   const isLoggedInUserBlogOwner = () => {
@@ -56,7 +59,7 @@ const ShowBlogInfo = ({ blog, handleBlogRemove }) => {
         <div>
           <p>{blog.url}</p>
           <p id="likes">
-            likes {likes}
+            likes {currentLikes}
             <Button
               id={"like-button"}
               text={"like"}

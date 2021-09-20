@@ -8,6 +8,10 @@ const handleNewBlogAction = (state, data) => {
   return [...state, data];
 };
 
+const handleLikeBlogAction = (state, data) => {
+  return [...state].map((blog) => (blog.id !== data.id ? blog : data.response));
+};
+
 export const newBlogCreator = (blog) => {
   return async (dispatch) => {
     try {
@@ -38,6 +42,21 @@ export const removeBlogCreator = (id) => {
   };
 };
 
+export const likeBlogCreator = (id, blog) => {
+  return async (dispatch) => {
+    try {
+      const response = await blogService.update(id, blog);
+      console.log("Response to blog update", response);
+      dispatch({
+        type: "LIKE",
+        data: { response, id },
+      });
+    } catch (error) {
+      console.log("Something went wrong while updating a blog\n", error);
+    }
+  };
+};
+
 export const initBlogsCreator = () => {
   return async (dispatch) => {
     const blogs = await blogService.getAll();
@@ -54,6 +73,8 @@ const blogReducer = (state = [], action) => {
       return handleNewBlogAction(state, action.data);
     case "REMOVE_BLOG":
       return handleRemoveBlogAction(state, action.data);
+    case "LIKE":
+      return handleLikeBlogAction(state, action.data);
     case "INIT_BLOGS":
       return action.data;
     default:
