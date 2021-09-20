@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Notification from "./components/Notification";
 import Login from "./components/Login";
-import ShowUserLogin from "./components/ShowUserLogin";
 import ShowBlogs from "./components/ShowBlogs";
 import CreateNewBlog from "./components/CreateNewBlog";
 import Togglable from "./components/Togglable";
@@ -17,6 +16,7 @@ import { Route, Switch } from "react-router-dom";
 import ShowUsers from "./components/ShowUsers";
 import IndividualUser from "./components/IndividualUser";
 import IndividualBlog from "./components/IndividualBlog";
+import Menu from "./components/Menu";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -104,8 +104,8 @@ const App = () => {
       )}
       {user !== null && (
         <div>
-          <h2>Blogs</h2>
-          <ShowUserLogin name={`${user.name}`} />
+          <Menu name={`${user.name}`} />
+          <h2>Blog app</h2>
           <Switch>
             <Route path="/users/:id">
               <IndividualUser />
