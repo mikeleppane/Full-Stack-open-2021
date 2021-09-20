@@ -12,6 +12,10 @@ const handleLikeBlogAction = (state, data) => {
   return [...state].map((blog) => (blog.id !== data.id ? blog : data.response));
 };
 
+const handleNewCommentAction = (state, data) => {
+  return [...state].map((blog) => (blog.id !== data.id ? blog : data.response));
+};
+
 export const newBlogCreator = (blog) => {
   return async (dispatch) => {
     try {
@@ -57,6 +61,22 @@ export const likeBlogCreator = (id, blog) => {
   };
 };
 
+export const commentBlogCreator = (id, comment) => {
+  return async (dispatch) => {
+    try {
+      const newComment = { comment };
+      const response = await blogService.createComment(id, newComment);
+      console.log("Response to blog comment", response);
+      dispatch({
+        type: "NEW_COMMENT",
+        data: { response, id },
+      });
+    } catch (error) {
+      console.log("Something went wrong while updating a blog\n", error);
+    }
+  };
+};
+
 export const initBlogsCreator = () => {
   return async (dispatch) => {
     const blogs = await blogService.getAll();
@@ -69,6 +89,8 @@ export const initBlogsCreator = () => {
 
 const blogReducer = (state = [], action) => {
   switch (action.type) {
+    case "NEW_COMMENT":
+      return handleNewCommentAction(state, action.data);
     case "NEW_BLOG":
       return handleNewBlogAction(state, action.data);
     case "REMOVE_BLOG":

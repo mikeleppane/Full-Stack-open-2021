@@ -14,6 +14,32 @@ blogsRouter.get("/:id", async (request, response) => {
   response.json(blog.toJSON());
 });
 
+blogsRouter.get("/:id/comments", async (request, response) => {
+  const blog = await Blog.findById(request.params.id).populate("user", {
+    username: 1,
+    name: 1,
+  });
+  response.json(blog.comments);
+});
+
+blogsRouter.post("/:id/comments", async (request, response) => {
+  const blog = await Blog.findById(request.params.id);
+  const body = request.body;
+  if (!body.comment) {
+    return response.status(400).json({
+      error: "comment is missing",
+    });
+  }
+  const comments = [...blog.comments, body.comment];
+
+  const updatedBlog = { comments: comments };
+
+  const newBlog = await Blog.findByIdAndUpdate(request.params.id, updatedBlog, {
+    new: true,
+  }).populate("user", { username: 1, name: 1 });
+  response.status(200).json(newBlog);
+});
+
 blogsRouter.post("/", async (request, response) => {
   const body = request.body;
   const user = request.user;
