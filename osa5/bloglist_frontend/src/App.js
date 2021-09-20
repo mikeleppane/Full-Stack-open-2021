@@ -16,6 +16,7 @@ import { loggedInUserCreator, userCreator } from "./reducers/userReducer";
 import { Route, Switch } from "react-router-dom";
 import ShowUsers from "./components/ShowUsers";
 import IndividualUser from "./components/IndividualUser";
+import IndividualBlog from "./components/IndividualBlog";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -111,6 +112,9 @@ const App = () => {
             </Route>
             <Route path="/users">
               <ShowUsers />
+            </Route>
+            <Route path="/blogs/:id">
+              <IndividualBlog />
             </Route>
             <Route path="/">
               <Togglable buttonLabel={"create new blog"}>

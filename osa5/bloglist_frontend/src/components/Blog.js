@@ -3,6 +3,7 @@ import Button from "./Button";
 import PropTypes from "prop-types";
 import { likeBlogCreator } from "../reducers/blogReducer";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const ShowBlogInfo = ({ blog, handleBlogRemove }) => {
   const [buttonText, setButtonText] = useState("view");
@@ -37,6 +38,8 @@ const ShowBlogInfo = ({ blog, handleBlogRemove }) => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
+      console.log("USER: ", user);
+      console.log("BLOG: ", blog);
       const isValidUser = user.username === blog.user.username;
       if (isValidUser) {
         return true;
@@ -48,7 +51,7 @@ const ShowBlogInfo = ({ blog, handleBlogRemove }) => {
   return (
     <div>
       <p id="blog-title">
-        {blog.title}
+        <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
         <Button
           id={"show-blog-button"}
           text={buttonText}
