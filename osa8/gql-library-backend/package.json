@@ -1,0 +1,27 @@
+{
+  "name": "gql-library-backend",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node library-backend.js",
+    "dev": "nodemon library-backend.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mikko Leppänen",
+  "license": "MIT",
+  "dependencies": {
+    "apollo-server": "^3.3.0",
+    "eslint-plugin-graphql": "^4.0.0",
+    "graphql": "^15.6.0",
+    "lodash": "^4.17.21",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.24.2",
+    "nodemon": "^2.0.12",
+    "prettier": "^2.4.1"
+  }
+}
