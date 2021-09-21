@@ -1,35 +1,16 @@
 import React from "react";
 import PropTypes from "prop-types";
-
-const notificationStyle = {
-  color: "green",
-  backGround: "lightgrey",
-  fontSize: "20px",
-  borderStyle: "solid",
-  borderWidth: "3px",
-  borderRadius: "5px",
-  padding: "10px",
-  marginBottom: "10px",
-};
+import Alert from "@mui/material/Alert";
 
 const Notification = ({ message, type }) => {
   if (!message) {
     return null;
   }
-  let usedStyle = {};
-  if (type === "success") {
-    usedStyle = { ...notificationStyle, color: "green" };
-  } else if (type === "error") {
-    usedStyle = { ...notificationStyle, color: "red" };
-  }
-  if (usedStyle) {
-    return (
-      <div id="notification" style={usedStyle}>
-        {message}
-      </div>
-    );
-  }
-  return null;
+  return (
+    <div>
+      <Alert severity={type}>{message}</Alert>
+    </div>
+  );
 };
 
 Notification.propTypes = {

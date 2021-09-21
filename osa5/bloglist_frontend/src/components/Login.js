@@ -1,5 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import LoginIcon from "@mui/icons-material/Login";
 
 const Login = ({
   handleLogin,
@@ -12,8 +15,10 @@ const Login = ({
     <div>
       <form onSubmit={handleLogin}>
         <div>
-          username
-          <input
+          <TextField
+            size="small"
+            label={"Enter username"}
+            required
             id="username_login"
             type="text"
             value={username}
@@ -22,18 +27,29 @@ const Login = ({
           />
         </div>
         <div>
-          password
-          <input
+          <TextField
+            sx={{ marginTop: 2 }}
+            type={"password"}
+            size="small"
+            label={"Enter password"}
+            required
             id="password_login"
-            type="password"
             value={password}
             name="Password"
             onChange={handlePasswordOnChange}
           />
         </div>
-        <button id="login-button" type="submit">
+        <Button
+          sx={{ marginTop: 2 }}
+          startIcon={<LoginIcon />}
+          size="small"
+          variant="contained"
+          color={"primary"}
+          id="login-button"
+          type="submit"
+        >
           login
-        </button>
+        </Button>
       </form>
     </div>
   );

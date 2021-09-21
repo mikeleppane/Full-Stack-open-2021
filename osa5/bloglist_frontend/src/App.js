@@ -17,6 +17,7 @@ import ShowUsers from "./components/ShowUsers";
 import IndividualUser from "./components/IndividualUser";
 import IndividualBlog from "./components/IndividualBlog";
 import Menu from "./components/Menu";
+import { CssBaseline } from "@mui/material";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -88,7 +89,8 @@ const App = () => {
   };
 
   return (
-    <div>
+    <div style={{ margin: "10px" }}>
+      <CssBaseline />
       <Notification message={notification.message} type={notification.type} />
       {user === null && (
         <div>

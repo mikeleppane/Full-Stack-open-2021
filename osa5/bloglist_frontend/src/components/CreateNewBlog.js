@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import Button from "@mui/material/Button";
 
 const CreateNewBlog = ({ createBlog }) => {
   const [newBlog, setNewBlog] = useState({ title: "", author: "", url: "" });
@@ -49,9 +50,9 @@ const CreateNewBlog = ({ createBlog }) => {
             }}
           />
         </div>
-        <button id="submit-new-blog-button" type="submit">
+        <Button variant="contained" id="submit-new-blog-button" type="submit">
           create
-        </button>
+        </Button>
       </form>
     </div>
   );
