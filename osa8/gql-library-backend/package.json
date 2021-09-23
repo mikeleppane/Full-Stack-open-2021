@@ -11,7 +11,7 @@
   "author": "Mikko Leppänen",
   "license": "MIT",
   "dependencies": {
-    "apollo-server": "^3.3.0",
+    "apollo-server": "^2.25.2",
     "dotenv": "^10.0.0",
     "eslint-plugin-graphql": "^4.0.0",
     "graphql": "^15.6.0",
