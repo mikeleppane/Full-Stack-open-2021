@@ -1,16 +1,43 @@
-import React from "react";
-import { useQuery } from "@apollo/client";
-import { ALL_BOOKS } from "../services/queries";
+import React, { useEffect, useState } from "react";
+import { useLazyQuery, useQuery } from "@apollo/client";
+import { ALL_BOOKS, GET_BOOKS_BY_GENRE } from "../services/queries";
+import _ from "lodash";
 
 const Books = (props) => {
-  const result = useQuery(ALL_BOOKS);
+  const all_books = useQuery(ALL_BOOKS, { pollInterval: 2000 });
+  const [getBooks, result] = useLazyQuery(GET_BOOKS_BY_GENRE);
+  const [books, setBooks] = useState([]);
+  const [genres, setGenres] = useState([]);
+
+  useEffect(() => {
+    if (all_books.data) {
+      setBooks(all_books.data.allBooks);
+      setGenres(_.uniq(all_books.data.allBooks.map((b) => b.genres).flat()));
+    }
+  }, [all_books]);
+
+  useEffect(() => {
+    if (result.data) {
+      setBooks(result.data.allBooks);
+    }
+  }, [result]);
+
   if (!props.show) {
     return null;
   }
 
-  if (result.loading) {
+  if (all_books.loading) {
     return <div>loading...</div>;
   }
+
+  const handleGenreButtonClick = (event) => {
+    console.log(event.target.value);
+    getBooks({
+      variables: {
+        genre: event.target.value,
+      },
+    });
+  };
 
   return (
     <div>
@@ -23,7 +50,7 @@ const Books = (props) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {result.data.allBooks.map((a) => (
+          {books.map((a) => (
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>
@@ -32,6 +59,11 @@ const Books = (props) => {
           ))}
         </tbody>
       </table>
+      {genres.map((g) => (
+        <button key={g} value={g} onClick={handleGenreButtonClick}>
+          {g}
+        </button>
+      ))}
     </div>
   );
 };
