@@ -1,25 +1,4 @@
-export {};
-
-interface MultiplyValues {
-  height: number;
-  weight: number;
-}
-
-const parseArguments = (args: Array<string>): MultiplyValues => {
-  if (args.length < 4) throw new Error("Not enough arguments");
-  if (args.length > 4) throw new Error("Too many arguments");
-
-  if (!isNaN(Number(args[2])) && !isNaN(Number(args[3]))) {
-    return {
-      height: Number(args[2]),
-      weight: Number(args[3]),
-    };
-  } else {
-    throw new Error("Provided values were not numbers!");
-  }
-};
-
-const BMICalculator = (height: number, weight: number): string => {
+export const BMICalculator = (height: number, weight: number): string => {
   if (height === 0) {
     throw new Error("Zero division error: height cannot be zero.");
   }
@@ -47,11 +26,3 @@ const BMICalculator = (height: number, weight: number): string => {
     return `Overweight (obese class 3)`;
   }
 };
-try {
-  const { height, weight } = parseArguments(process.argv);
-  console.log(BMICalculator(height, weight));
-} catch (e) {
-  if (e instanceof Error) {
-    console.log("Error, something bad happened, message: ", e.message);
-  }
-}

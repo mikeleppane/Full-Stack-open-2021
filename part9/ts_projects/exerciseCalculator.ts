@@ -1,10 +1,3 @@
-export {};
-
-interface ExerciseValues {
-  exerciseHours: Array<number>;
-  target: number;
-}
-
 interface ExerciseResult {
   periodLength: number;
   trainingDays: number;
@@ -15,23 +8,7 @@ interface ExerciseResult {
   average: number;
 }
 
-const parseArguments = (args: Array<string>): ExerciseValues => {
-  if (args.length < 4) throw new Error("Not enough arguments");
-  const [, , targetValue, ...exerciseHourValues] = args;
-  const target = Number(targetValue);
-  if (isNaN(target)) {
-    throw new Error("Provided target value must be a number!");
-  }
-  const exerciseHours: Array<number> = exerciseHourValues.map((v) => Number(v));
-  exerciseHours.forEach((v) => {
-    if (isNaN(v)) {
-      throw new Error("Provided exercises values must be numbers!");
-    }
-  });
-  return { exerciseHours: exerciseHours, target: target };
-};
-
-const ExerciseCalculator = (
+export const exerciseCalculator = (
   exerciseHours: Array<number>,
   target: number
 ): ExerciseResult => {
@@ -68,12 +45,3 @@ const ExerciseCalculator = (
     ratingDescription: ratingDesc[calculatedRating],
   };
 };
-
-try {
-  const { exerciseHours, target } = parseArguments(process.argv);
-  console.log(ExerciseCalculator(exerciseHours, target));
-} catch (e) {
-  if (e instanceof Error) {
-    console.log("Error, something bad happened, message: ", e.message);
-  }
-}
