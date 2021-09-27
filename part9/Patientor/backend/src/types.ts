@@ -14,3 +14,17 @@ export interface PatientEntry {
 }
 
 export type PatientEntrySsnExcluded = Omit<PatientEntry, "ssn">;
+export type NewPatientEntry = Omit<PatientEntry, "id">;
+
+export interface NewPatientEntryFields {
+  name: unknown;
+  dateOfBirth: unknown;
+  ssn: unknown;
+  gender: unknown;
+  occupation: unknown;
+}
+
+export enum GenderEnum {
+  Male = "male",
+  Female = "female",
+}
