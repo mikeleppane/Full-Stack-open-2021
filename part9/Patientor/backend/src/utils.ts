@@ -7,6 +7,7 @@ const createPatientEntry = (object: NewPatientEntryFields): NewPatientEntry => {
     ssn: validateSsn(object.ssn),
     gender: validateGender(object.gender),
     occupation: validateOccupation(object.occupation),
+    entries: [],
   };
 };
 

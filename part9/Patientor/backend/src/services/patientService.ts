@@ -1,5 +1,6 @@
 import {
   NewPatientEntry,
+  Patient,
   PatientEntry,
   PatientEntrySsnExcluded,
 } from "../types";
@@ -18,6 +19,20 @@ const getEntries = (): PatientEntrySsnExcluded[] => {
   );
 };
 
+const getAll = (): Patient[] => {
+  return patientEntries.map(
+    ({ id, name, dateOfBirth, gender, occupation, ssn, entries }) => ({
+      id,
+      name,
+      dateOfBirth,
+      gender,
+      occupation,
+      ssn,
+      entries,
+    })
+  );
+};
+
 const addEntry = (entry: NewPatientEntry): PatientEntry => {
   console.log(entry);
   const newPatientEntry = {
@@ -32,4 +47,5 @@ const addEntry = (entry: NewPatientEntry): PatientEntry => {
 export default {
   getEntries,
   addEntry,
+  getAll,
 };
