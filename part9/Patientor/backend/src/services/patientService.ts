@@ -4,23 +4,22 @@ import {
   PatientEntry,
   PatientEntrySsnExcluded,
 } from "../types";
-import patientEntries from "../../data/patients";
 import { v1 as uuidv1 } from "uuid";
+import patients from "../../data/patients";
 
 const getEntries = (): PatientEntrySsnExcluded[] => {
-  return patientEntries.map(
-    ({ id, name, dateOfBirth, gender, occupation }) => ({
-      id,
-      name,
-      dateOfBirth,
-      gender,
-      occupation,
-    })
-  );
+  return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
+    id,
+    name,
+    dateOfBirth,
+    gender,
+    occupation,
+  }));
 };
 
 const getAll = (): Patient[] => {
-  return patientEntries.map(
+  console.log(patients);
+  return patients.map(
     ({ id, name, dateOfBirth, gender, occupation, ssn, entries }) => ({
       id,
       name,
@@ -40,7 +39,7 @@ const addEntry = (entry: NewPatientEntry): PatientEntry => {
     ...entry,
   };
 
-  patientEntries.push(newPatientEntry);
+  patients.push(newPatientEntry);
   return newPatientEntry;
 };
 
