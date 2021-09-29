@@ -166,7 +166,9 @@ const validateDischarge = (discharge: unknown): IDischarge => {
   if (discharge && isDischarge(discharge)) {
     return discharge;
   }
-  throw new Error(`Incorrect or missing discharge: ${discharge}`);
+  throw new Error(
+    `Incorrect or missing discharge: ${JSON.stringify(discharge)}`
+  );
 };
 
 const isDischarge = (obj: unknown): obj is IDischarge => {
@@ -187,7 +189,7 @@ const validateSickLeave = (sickLeave: unknown): ISickLeave => {
   if (sickLeave && isSickLeave(sickLeave)) {
     return sickLeave;
   }
-  throw new Error(`Incorrect sick leave: ${sickLeave}`);
+  throw new Error(`Incorrect sick leave: ${JSON.stringify(sickLeave)}`);
 };
 
 const isSickLeave = (obj: unknown): obj is ISickLeave => {
