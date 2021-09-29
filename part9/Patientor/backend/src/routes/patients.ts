@@ -1,6 +1,6 @@
 import express from "express";
 import patientService from "../services/patientService";
-import createPatientEntry from "../utils";
+import { createEntryForPatient, createPatientEntry } from "../utils";
 
 const router = express.Router();
 
@@ -28,6 +28,23 @@ router.post("/", (req, res) => {
     res.json(newPatientEntry);
   } catch (error) {
     if (error instanceof Error) {
+      res.status(400).send(error.message).end();
+    }
+  }
+});
+
+router.post("/:id/entries", (req, res) => {
+  try {
+    const entry = createEntryForPatient(req.body);
+
+    const newPatientEntry = patientService.addEntryForPatient(
+      entry,
+      req.params.id
+    );
+    res.json(newPatientEntry);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log(error);
       res.status(400).send(error.message).end();
     }
   }

@@ -1,4 +1,6 @@
 import {
+  Entry,
+  EntryWithoutId,
   NewPatientEntry,
   Patient,
   PatientEntry,
@@ -43,8 +45,22 @@ const addEntry = (entry: NewPatientEntry): PatientEntry => {
   return newPatientEntry;
 };
 
+const addEntryForPatient = (entry: EntryWithoutId, id: string): Entry => {
+  console.log(entry);
+  const newEntry = {
+    id: uuidv1(),
+    ...entry,
+  };
+  const patientToBeupdated = patients.find((p) => p.id === id);
+  if (patientToBeupdated) {
+    patientToBeupdated.entries = [...patientToBeupdated.entries, newEntry];
+    return newEntry;
+  }
+  throw new Error(`Cannot find patient with an ID: ${id}`);
+};
 export default {
   getEntries,
   addEntry,
   getAll,
+  addEntryForPatient,
 };
