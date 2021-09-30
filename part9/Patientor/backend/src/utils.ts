@@ -147,12 +147,12 @@ export const createEntryForPatient = (
 };
 
 const validateDiagnosisCodes = (codes: unknown): string[] => {
-  if (
-    codes &&
-    Array.isArray(codes) &&
-    codes.every((item) => typeof item === "string")
-  ) {
-    return codes as string[];
+  if (codes && Array.isArray(codes)) {
+    if (
+      codes.length === 0 ||
+      (codes.length > 0 && codes.every((item) => typeof item === "string"))
+    )
+      return codes as string[];
   }
   throw new Error(`Incorrect diagnoses codes: ${codes}`);
 };
@@ -193,12 +193,29 @@ const validateSickLeave = (sickLeave: unknown): ISickLeave => {
 };
 
 const isSickLeave = (obj: unknown): obj is ISickLeave => {
-  return (
+  let isValidStartDate = false;
+  if (
     (obj as ISickLeave).startDate !== undefined &&
-    isString((obj as ISickLeave).startDate) &&
+    isString((obj as ISickLeave).startDate)
+  ) {
+    if (!(obj as ISickLeave).startDate) {
+      isValidStartDate = true;
+    } else {
+      isValidStartDate = isDate((obj as ISickLeave).startDate);
+    }
+  }
+  let isValidEndDate = false;
+  if (
     (obj as ISickLeave).endDate !== undefined &&
     isString((obj as ISickLeave).endDate)
-  );
+  ) {
+    if (!(obj as ISickLeave).endDate) {
+      isValidStartDate = true;
+    } else {
+      isValidStartDate = isDate((obj as ISickLeave).endDate);
+    }
+  }
+  return isValidStartDate && isValidEndDate;
 };
 
 const validateDate = (date: unknown): string => {
@@ -257,7 +274,7 @@ const validateOccupationalHealthcareType = (
 };
 
 const validatehealthCheckRating = (healthCheckRating: unknown): number => {
-  if (healthCheckRating && isNumber(healthCheckRating)) {
+  if (healthCheckRating !== undefined && isNumber(healthCheckRating)) {
     return healthCheckRating;
   }
   throw new Error(

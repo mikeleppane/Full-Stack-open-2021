@@ -51,6 +51,7 @@ const addEntryForPatient = (entry: EntryWithoutId, id: string): Entry => {
     id: uuidv1(),
     ...entry,
   };
+  console.log("NEW ENTRY: ", newEntry);
   const patientToBeupdated = patients.find((p) => p.id === id);
   if (patientToBeupdated) {
     patientToBeupdated.entries = [...patientToBeupdated.entries, newEntry];

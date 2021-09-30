@@ -28,6 +28,7 @@ router.post("/", (req, res) => {
     res.json(newPatientEntry);
   } catch (error) {
     if (error instanceof Error) {
+      console.log("ERROR: ", error);
       res.status(400).send(error.message).end();
     }
   }
@@ -44,7 +45,7 @@ router.post("/:id/entries", (req, res) => {
     res.json(newPatientEntry);
   } catch (error) {
     if (error instanceof Error) {
-      console.log(error);
+      console.log("ERROR: ", error);
       res.status(400).send(error.message).end();
     }
   }
